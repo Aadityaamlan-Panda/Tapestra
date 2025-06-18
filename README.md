@@ -143,7 +143,7 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 - [Streamlit Docs: Creating and Sharing Apps](https://docs.streamlit.io/)
 - [Streamlit Deployment Guide](https://docs.streamlit.io/deploy/tutorials)
 - [Awesome Streamlit Project Templates](https://streamlit.io/gallery)
-- [GeeksforGeeks: NLTK Tutorial][[4](https://www.geeksforgeeks.org/python/introduction-to-nltk-tokenization-stemming-lemmatization-pos-tagging/)]
+- [GeeksforGeeks: NLTK Tutorial](https://www.geeksforgeeks.org/python/introduction-to-nltk-tokenization-stemming-lemmatization-pos-tagging/)
 
 ---
 
