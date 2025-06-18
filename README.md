@@ -13,8 +13,8 @@ An interactive Streamlit web app for visualizing and analyzing conceptual relati
 
 ## 📸 Screenshots
 
-<p align="center"> <img src="screenshots/paragraph_graph.png" alt="Paragraph Concept Graph" width="600"/> </p> 
-<p align="center"> <img src="screenshots/combined_graph.png" alt="Combined Concept Graph" width="600"/> </p>
+<p align="center"> <img src="screenshots/paragraph_graph.png" alt="Paragraph Concept Graph" width="1200"/> </p> 
+<p align="center"> <img src="screenshots/combined_graph.png" alt="Combined Concept Graph" width="1200"/> </p>
 
 
 ---
