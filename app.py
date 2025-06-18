@@ -320,134 +320,144 @@ if st.button("Article Covered: Combine Information", key="combine_info_btn"):
     st.session_state.combined_nodes_cache = (combined_nodes, combined_texts)
 
 if st.session_state.show_combined_graph and st.session_state.combined_nodes_cache:
-    st.header("Combined Concept Graph (All Paragraphs)")
-    combined_nodes, combined_texts = st.session_state.combined_nodes_cache
-    vectorizer = TfidfVectorizer()
-    tfidf_matrix = vectorizer.fit_transform(combined_texts)
-    similarity_matrix = cosine_similarity(tfidf_matrix)
-    np.fill_diagonal(similarity_matrix, 0)
-    n_combined = len(combined_nodes)
-    combined_graph_nx = nx.DiGraph()
-    for i in range(n_combined):
-        combined_graph_nx.add_node(i)
-    threshold = 0.15
-    for i in range(n_combined):
-        for j in range(n_combined):
-            if i != j and similarity_matrix[i, j] > threshold:
-                combined_graph_nx.add_edge(i, j, weight=similarity_matrix[i, j])
-    combined_net = Network(height="1000px", width="100%", directed=True, notebook=False, bgcolor="#0e1117")
-    combined_net.barnes_hut()
-    for idx, (nid, summary, is_start) in enumerate(combined_nodes):
-        node_label = f"[{nid}]\n{wrap_label(summary, width=35)}"
-        if idx == 0:
-            combined_net.add_node(
-                nid,
-                label=node_label,
-                title=summary,
-                color={"background": "#FFFF99", "border": "#FFD700", "highlight": {"background": "#FFD700", "border": "#FFD700"}},
-                shape="circle",
-                font={"size": 22, "face": "arial", "multi": True, "color": "#111111", "bold": True},
-                borderWidth=5
+    # --- TWO COLUMNS: LEFT=PHYSICS CONTROLS, RIGHT=COMBINED GRAPH ---
+    col_phys, col_graph = st.columns([1, 3], gap="large")
+    with col_phys:
+        st.header("Physics Controls (Combined)")
+        spring_length_c = st.slider("Spring Length (gap between nodes)", min_value=100, max_value=1200, value=500, step=50, key="spring_length_combined")
+        spring_constant_c = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant_combined")
+        grav_constant_c = st.slider("Gravitational Constant (less negative = less clustering)", min_value=-5000, max_value=-100, value=-1000, step=100, key="grav_constant_combined")
+        central_gravity_c = st.slider("Central Gravity", min_value=0.0, max_value=1.0, value=0.3, step=0.05, key="central_gravity_combined")
+
+    with col_graph:
+        st.header("Combined Concept Graph (All Paragraphs)")
+        combined_nodes, combined_texts = st.session_state.combined_nodes_cache
+        vectorizer = TfidfVectorizer()
+        tfidf_matrix = vectorizer.fit_transform(combined_texts)
+        similarity_matrix = cosine_similarity(tfidf_matrix)
+        np.fill_diagonal(similarity_matrix, 0)
+        n_combined = len(combined_nodes)
+        combined_graph_nx = nx.DiGraph()
+        for i in range(n_combined):
+            combined_graph_nx.add_node(i)
+        threshold = 0.15
+        for i in range(n_combined):
+            for j in range(n_combined):
+                if i != j and similarity_matrix[i, j] > threshold:
+                    combined_graph_nx.add_edge(i, j, weight=similarity_matrix[i, j])
+        combined_net = Network(height="1000px", width="100%", directed=True, notebook=False, bgcolor="#0e1117")
+        combined_net.barnes_hut()
+        for idx, (nid, summary, is_start) in enumerate(combined_nodes):
+            node_label = f"[{nid}]\n{wrap_label(summary, width=35)}"
+            if idx == 0:
+                combined_net.add_node(
+                    nid,
+                    label=node_label,
+                    title=summary,
+                    color={"background": "#FFFF99", "border": "#FFD700", "highlight": {"background": "#FFD700", "border": "#FFD700"}},
+                    shape="circle",
+                    font={"size": 22, "face": "arial", "multi": True, "color": "#111111", "bold": True},
+                    borderWidth=5
+                )
+            else:
+                combined_net.add_node(
+                    nid,
+                    label=node_label,
+                    title=summary,
+                    color={"background": "#FFA500", "border": "#FF8C00", "highlight": {"background": "#FFD580", "border": "#FF8C00"}},
+                    shape="box",
+                    font={"size": 22, "face": "arial", "multi": True, "color": "#111111", "bold": True},
+                    widthConstraint={"maximum": 400, "minimum": 200}
+                )
+        for u, v, w in combined_graph_nx.edges(data='weight'):
+            combined_net.add_edge(
+                u, v, value=w, arrowStrikethrough=False, arrows="to",
+                color="#FFFFFF", width=2,
+                smooth={"type": "curvedCW"},
+                title=f"Similarity: {w:.2f}"
             )
-        else:
-            combined_net.add_node(
-                nid,
-                label=node_label,
-                title=summary,
-                color={"background": "#FFA500", "border": "#FF8C00", "highlight": {"background": "#FFD580", "border": "#FF8C00"}},
-                shape="box",
-                font={"size": 22, "face": "arial", "multi": True, "color": "#111111", "bold": True},
-                widthConstraint={"maximum": 400, "minimum": 200}
+        combined_net.set_options(f"""
+        {{
+          "edges": {{
+            "arrows": {{
+              "to": {{
+                "enabled": true,
+                "type": "arrow",
+                "scaleFactor": 2.2,
+                "color": "#FFFFFF"
+              }}
+            }},
+            "color": "#FFFFFF",
+            "smooth": {{
+              "type": "curvedCW",
+              "roundness": 0.3
+            }}
+          }},
+          "nodes": {{
+            "borderWidth": 2,
+            "shadow": true,
+            "font": {{
+              "size": 22,
+              "face": "arial",
+              "multi": true,
+              "color": "#111111",
+              "bold": true
+            }},
+            "widthConstraint": {{
+              "maximum": 400,
+              "minimum": 200
+            }}
+          }},
+          "physics": {{
+            "barnesHut": {{
+              "gravitationalConstant": {grav_constant_c},
+              "centralGravity": {central_gravity_c},
+              "springLength": {spring_length_c},
+              "springConstant": {spring_constant_c}
+            }},
+            "minVelocity": 0.75,
+            "timestep": 0.2,
+            "stabilization": {{
+              "enabled": true,
+              "iterations": 2000,
+              "fit": true
+            }}
+          }},
+          "interaction": {{
+            "zoomView": true,
+            "dragView": true,
+            "dragNodes": true,
+            "multiselect": true,
+            "navigationButtons": true,
+            "keyboard": true
+          }},
+          "layout": {{
+            "improvedLayout": true
+          }},
+          "autoResize": true,
+          "height": "100%",
+          "width": "100%",
+          "background": "#0e1117"
+        }}
+        """)
+        combined_path = "combined_graph.html"
+        combined_net.save_graph(combined_path)
+        st.components.v1.html(open(combined_path, "r", encoding="utf-8").read(), height=1000, scrolling=True)
+        with open(combined_path, "rb") as f:
+            st.download_button(
+                label="Download Idea Map (Open in Browser)",
+                data=f,
+                file_name="combined_graph.html",
+                mime="text/html"
             )
-    for u, v, w in combined_graph_nx.edges(data='weight'):
-        combined_net.add_edge(
-            u, v, value=w, arrowStrikethrough=False, arrows="to",
-            color="#FFFFFF", width=2,
-            smooth={"type": "curvedCW"},
-            title=f"Similarity: {w:.2f}"
-        )
-    combined_net.set_options(f"""
-    {{
-      "edges": {{
-        "arrows": {{
-          "to": {{
-            "enabled": true,
-            "type": "arrow",
-            "scaleFactor": 2.2,
-            "color": "#FFFFFF"
-          }}
-        }},
-        "color": "#FFFFFF",
-        "smooth": {{
-          "type": "curvedCW",
-          "roundness": 0.3
-        }}
-      }},
-      "nodes": {{
-        "borderWidth": 2,
-        "shadow": true,
-        "font": {{
-          "size": 22,
-          "face": "arial",
-          "multi": true,
-          "color": "#111111",
-          "bold": true
-        }},
-        "widthConstraint": {{
-          "maximum": 400,
-          "minimum": 200
-        }}
-      }},
-      "physics": {{
-        "barnesHut": {{
-          "gravitationalConstant": {grav_constant},
-          "centralGravity": {central_gravity},
-          "springLength": {spring_length},
-          "springConstant": {spring_constant}
-        }},
-        "minVelocity": 0.75,
-        "timestep": 0.2,
-        "stabilization": {{
-          "enabled": true,
-          "iterations": 2000,
-          "fit": true
-        }}
-      }},
-      "interaction": {{
-        "zoomView": true,
-        "dragView": true,
-        "dragNodes": true,
-        "multiselect": true,
-        "navigationButtons": true,
-        "keyboard": true
-      }},
-      "layout": {{
-        "improvedLayout": true
-      }},
-      "autoResize": true,
-      "height": "100%",
-      "width": "100%",
-      "background": "#0e1117"
-    }}
-    """)
-    combined_path = "combined_graph.html"
-    combined_net.save_graph(combined_path)
-    st.components.v1.html(open(combined_path, "r", encoding="utf-8").read(), height=1000, scrolling=True)
-    with open(combined_path, "rb") as f:
-        st.download_button(
-            label="Download Idea Map (Open in Browser)",
-            data=f,
-            file_name="combined_graph.html",
-            mime="text/html"
-        )
-    st.markdown("#### Article Walkthrough")
-    try:
-        df_combined = get_best_paths_all_sources(combined_graph_nx, n_combined)
-        if "Average Similarity" in df_combined.columns:
-            df_combined = df_combined[df_combined["Average Similarity"].apply(lambda x: isinstance(x, float) or isinstance(x, int))]
-            st.table(df_combined)
-        else:
-            st.warning("The ideas are not interdependent. All key sentences require separate reading.")
-    except Exception as e:
-        st.error(f"Error in combined graph path calculation: {str(e)}")
-    st.info("All start and key nodes from all paragraphs are combined in topological order. First node is yellow, rest are orange.")
+        st.markdown("#### Article Walkthrough")
+        try:
+            df_combined = get_best_paths_all_sources(combined_graph_nx, n_combined)
+            if "Average Similarity" in df_combined.columns:
+                df_combined = df_combined[df_combined["Average Similarity"].apply(lambda x: isinstance(x, float) or isinstance(x, int))]
+                st.table(df_combined)
+            else:
+                st.warning("The ideas are not interdependent. All key sentences require separate reading.")
+        except Exception as e:
+            st.error(f"Error in combined graph path calculation: {str(e)}")
+        st.info("All start and key nodes from all paragraphs are combined in topological order. First node is yellow, rest are orange.")
