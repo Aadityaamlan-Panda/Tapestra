@@ -140,10 +140,10 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 
 ## 🔗 References
 
-- [Streamlit Docs: Creating and Sharing Apps][3]
-- [Streamlit Deployment Guide][1]
-- [Awesome Streamlit Project Templates][2]
-- [Omdena: Streamlit App Examples][4]
+- [Streamlit Docs: Creating and Sharing Apps](https://docs.streamlit.io/)
+- [Streamlit Deployment Guide](https://docs.streamlit.io/deploy/tutorials)
+- [Awesome Streamlit Project Templates](https://streamlit.io/gallery)
+- [GeeksforGeeks: NLTK Tutorial][[4](https://www.geeksforgeeks.org/python/introduction-to-nltk-tokenization-stemming-lemmatization-pos-tagging/)]
 
 ---
 
