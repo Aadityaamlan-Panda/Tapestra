@@ -47,7 +47,6 @@ if "combined_nodes_cache" not in st.session_state:
     st.session_state.combined_nodes_cache = None
 
 with st.sidebar:
-    st.markdown('<div class="sticky-physics">', unsafe_allow_html=True)
     st.header("Physics Controls")
     spring_length = st.slider("Spring Length (gap between nodes)", min_value=100, max_value=1200, value=500, step=50, key="spring_length")
     spring_constant = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant")
