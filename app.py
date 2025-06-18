@@ -52,7 +52,6 @@ with st.sidebar:
     spring_constant = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant")
     grav_constant = st.slider("Gravitational Constant (less negative = less clustering)", min_value=-5000, max_value=-100, value=-1000, step=100, key="grav_constant")
     central_gravity = st.slider("Central Gravity", min_value=0.0, max_value=1.0, value=0.3, step=0.05, key="central_gravity")
-    st.markdown('</div>', unsafe_allow_html=True)
 
 def wrap_label(text, width=35):
     return "\n".join(textwrap.wrap(text, width=width))
