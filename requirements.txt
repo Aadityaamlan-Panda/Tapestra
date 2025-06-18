@@ -1,0 +1,8 @@
+streamlit
+nltk
+numpy
+pandas
+scikit-learn
+networkx
+pyvis
+textwrap3
