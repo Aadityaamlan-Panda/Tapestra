@@ -323,7 +323,7 @@ if st.session_state.show_combined_graph and st.session_state.combined_nodes_cach
     # --- TWO COLUMNS: LEFT=PHYSICS CONTROLS, RIGHT=COMBINED GRAPH ---
     col_phys, col_graph = st.columns([1, 3], gap="large")
     with col_phys:
-        st.header("Physics Controls (Combined)")
+        st.header("Physics Controls")
         spring_length_c = st.slider("Spring Length (gap between nodes)", min_value=100, max_value=1200, value=500, step=50, key="spring_length_combined")
         spring_constant_c = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant_combined")
         grav_constant_c = st.slider("Gravitational Constant (less negative = less clustering)", min_value=-5000, max_value=-100, value=-1000, step=100, key="grav_constant_combined")
