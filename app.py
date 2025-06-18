@@ -27,6 +27,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 nltk.download('punkt')
+nltk.download('punkt_tab')
 
 if "paragraphs" not in st.session_state:
     st.session_state.paragraphs = [
