@@ -8,7 +8,7 @@ import networkx as nx
 from pyvis.network import Network
 import textwrap
 
-st.set_page_config(layout="wide")
+#st.set_page_config(layout="wide")
 st.markdown("""
     <style>
         .main .block-container {padding: 1rem; max-width: 100vw;}
