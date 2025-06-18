@@ -46,15 +46,6 @@ if "show_combined_graph" not in st.session_state:
 if "combined_nodes_cache" not in st.session_state:
     st.session_state.combined_nodes_cache = None
 
-# --- PHYSICS CONTROLS IN THIRD COLUMN ---
-col1, col2, col_physics = st.columns([1.5, 3, 1])
-with col_physics:
-    st.header("Physics Controls")
-    spring_length = st.slider("Spring Length (gap between nodes)", min_value=100, max_value=1200, value=500, step=50, key="spring_length")
-    spring_constant = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant")
-    grav_constant = st.slider("Gravitational Constant (less negative = less clustering)", min_value=-5000, max_value=-100, value=-1000, step=100, key="grav_constant")
-    central_gravity = st.slider("Central Gravity", min_value=0.0, max_value=1.0, value=0.3, step=0.05, key="central_gravity")
-
 def wrap_label(text, width=35):
     return "\n".join(textwrap.wrap(text, width=width))
 
@@ -92,7 +83,8 @@ def get_best_paths_all_sources(precedence_graph, n, max_sim=1.01):
 
 st.title("Tapestra: The Concept Graph")
 for idx in range(len(st.session_state.paragraphs)):
-    col_left, col_right = st.columns([1, 3], gap="large")
+    # --- ALL THREE COLUMNS IN THE SAME ROW ---
+    col_left, col_right, col_physics = st.columns([1, 3, 1], gap="large")
     with col_left:
         st.header("Type into the space below to graph_")
         st.markdown(f"**Paragraph {idx+1}**")
@@ -295,6 +287,13 @@ for idx in range(len(st.session_state.paragraphs)):
                 st.error(f"Error in path calculation: {str(e)}")
         if error_msg:
             st.error(error_msg)
+    # --- PHYSICS CONTROLS IN THE THIRD COLUMN OF THE SAME ROW ---
+    with col_physics:
+        st.header("Physics Controls")
+        spring_length = st.slider("Spring Length (gap between nodes)", min_value=100, max_value=1200, value=500, step=50, key="spring_length")
+        spring_constant = st.slider("Spring Constant (lower = more flexible)", min_value=0.001, max_value=0.05, value=0.005, step=0.001, format="%.3f", key="spring_constant")
+        grav_constant = st.slider("Gravitational Constant (less negative = less clustering)", min_value=-5000, max_value=-100, value=-1000, step=100, key="grav_constant")
+        central_gravity = st.slider("Central Gravity", min_value=0.0, max_value=1.0, value=0.3, step=0.05, key="central_gravity")
     st.markdown("---")
 
 if st.button("Article Covered: Combine Information", key="combine_info_btn"):
